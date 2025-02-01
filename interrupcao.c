@@ -7,8 +7,8 @@
 
 // Definições de pinos
 #define LED_VERMELHO 13
-#define BOTAO_A 6
-#define BOTAO_B 5
+#define BOTAO_A 5
+#define BOTAO_B 6
 #define MATRIZ 7
 
 // Definições da matriz de LEDs e números
