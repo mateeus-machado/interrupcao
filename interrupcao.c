@@ -52,14 +52,12 @@ void put_leds(uint* art, double* red, double* green, double* blue, uint32_t valo
 
 // Função para exibir números na matriz de LEDs
 void exibir_numero(PIO pio, uint sm, uint contador) {
-    // Definir as cores como vermelho (r = 1, g = 0, b = 0)
     double red[NUM_PIXELS] = {1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0};
     double green[NUM_PIXELS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     double blue[NUM_PIXELS] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
     
     uint* numero;
 
-    // Números representados como matrizes 5x5
     uint numero_0[25] = {
         1, 1, 1, 1, 1,
         1, 0, 0, 0, 1,
@@ -154,8 +152,24 @@ void exibir_numero(PIO pio, uint sm, uint contador) {
         default: numero = numero_0; break;
     }
 
-    // Agora, ao invés de deixar os valores de cor como NULL, passamos as variáveis `red`, `green`, e `blue`
+    // Atualiza os LEDs com a cor vermelha
     put_leds(numero, red, green, blue, 0, pio, sm);
+}
+
+// Função para piscar o LED vermelho 5 vezes por segundo
+void piscar_led_vermelho() {
+    static uint32_t last_toggle_time = 0;
+    uint32_t current_time = to_us_since_boot(get_absolute_time());
+
+    // 200ms para piscar 5 vezes por segundo
+    if (current_time - last_toggle_time > 200000) {  
+        last_toggle_time = current_time;  // Atualiza o tempo da última troca
+
+        // Alterna o estado do LED (ON/OFF)
+        static bool led_on = false;
+        led_on = !led_on;
+        gpio_put(LED_VERMELHO, led_on ? 1 : 0);  // Liga ou desliga o LED
+    }
 }
 
 // Função de interrupção
@@ -211,9 +225,11 @@ int main() {
 
     // Loop principal
     while (true) {
+        // Chama a função para piscar o LED vermelho
+        piscar_led_vermelho();
+
         // Pode adicionar qualquer outra lógica aqui, se necessário
     }
-
 
     return 0;
 }
